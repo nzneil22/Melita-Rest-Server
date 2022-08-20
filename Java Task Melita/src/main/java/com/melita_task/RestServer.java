@@ -67,6 +67,7 @@ public class RestServer {
     public String newService(@RequestParam Map<String, Object> params){
         try {
 
+            verifyAttachService(params);
             int id = Integer.parseInt((String) params.get("id"));
             Service service = Service.convert((String) params.get("service"));
 
@@ -75,9 +76,7 @@ public class RestServer {
             db.attachService(id, service);
             messageProducer.send( new MessagePayload("Attach Service: "+service.getService(), db.getCustomer(id)));
             return "Customer: " +db.getCustomer(id);
-        } catch(CustomerNotFoundException e) {
-            return "ERROR: "+e.getMessage();
-        } catch(ServiceNotFoundException e) {
+        } catch(CustomerNotFoundException | InvalidParamsException | ServiceNotFoundException e) {
             return "ERROR: "+e.getMessage();
         }
     }
@@ -110,13 +109,10 @@ public class RestServer {
 
     }
 
-    private void verifyAttachService(Map<String, Object> serviceDetails, Boolean all) throws InvalidParamsException {
-        Boolean valid;
-        if(all){valid = serviceDetails.containsKey("name") && serviceDetails.containsKey("surname") && serviceDetails.containsKey("address");}
-        else{ valid = serviceDetails.containsKey("name") || serviceDetails.containsKey("surname") || serviceDetails.containsKey("address");}
+    private void verifyAttachService(Map<String, Object> serviceDetails) throws InvalidParamsException {
+        Boolean valid = serviceDetails.containsKey("id") && serviceDetails.containsKey("service") && serviceDetails.containsKey("preferredDate") && serviceDetails.containsKey("preferredTime");
 
-        if (!valid && all){ throw new InvalidParamsException("Invalid Parameters entered. name, surname and address must all be present");}
-        else if(!valid){ throw new InvalidParamsException("Invalid Parameters entered. At least one of name, surname or address must be present"); }
+        if(!valid){ throw new InvalidParamsException("Invalid Parameters entered. id, service, preferredDate and preferredTime must be present"); }
 
     }
 }
