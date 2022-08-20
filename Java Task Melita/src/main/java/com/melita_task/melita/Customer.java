@@ -6,6 +6,7 @@ import lombok.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 public class Customer {
@@ -14,6 +15,13 @@ public class Customer {
     @NonNull String surname;
     @NonNull String address;
     List<Service> services = new ArrayList<>();
+
+    public Customer(int id, Map<String, String> userDetails){
+        this.id = id;
+        this.name = userDetails.get("name");
+        this.surname = userDetails.get("surname");
+        this.address = userDetails.get("address");
+    }
 
     private void setName(String name){
         this.name = name;
@@ -40,4 +48,6 @@ public class Customer {
     public List<Service> getServices(){
         return services;
     }
+
+    public String getServiceWithId(){ return id +": "+(getServices().stream().map(Service::getService).collect( Collectors.toList() ).toString()); }
 }

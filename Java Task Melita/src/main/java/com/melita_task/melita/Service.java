@@ -22,6 +22,12 @@ public enum Service {
         return service;
     }
 
-
+    public static Service convert(String value) {
+        try {
+            return Service.valueOf(value);
+        } catch(IllegalArgumentException iae){
+            return Service.valueOf("ERROR");
+        }
+    }
 
 }
