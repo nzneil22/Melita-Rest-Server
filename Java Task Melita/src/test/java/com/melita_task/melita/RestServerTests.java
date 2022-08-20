@@ -1,10 +1,10 @@
-package com.example.melita;
+package com.melita_task.melita;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MelitaApplicationTests {
+class RestServerTests {
 
     @Test
     void contextLoads() {
