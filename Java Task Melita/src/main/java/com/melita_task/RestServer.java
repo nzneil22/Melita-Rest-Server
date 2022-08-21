@@ -8,76 +8,87 @@ import com.melita_task.amqp.MessagePayload;
 import com.melita_task.amqp.MessageProducer;
 import com.melita_task.exceptions.CustomerNotFoundException;
 import com.melita_task.exceptions.ServiceNotFoundException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.Method;
+import java.text.ParseException;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @SpringBootApplication
 @RestController
 public class RestServer {
 
-    @Autowired
-    MessageProducer messageProducer;
 
-    CustomerDataBase db = new CustomerDataBase();
+    private final MessageProducer messageProducer;
+
+    private final CustomerDataBase db;
+
+    @Autowired
+    public RestServer(CustomerDataBase db, MessageProducer messageProducer) {
+        this.db = db;
+        this.messageProducer = messageProducer;
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(RestServer.class, args);
     }
 
     @GetMapping("/registerClient")
-    public String registerClient(@RequestParam Map<String, String> userDetails){
-
+    public ResponseEntity<String> registerClient(@RequestParam Map<String, String> userDetails){
         try {
             verifyUserDetails(userDetails, true);
             db.addClient(new Customer(db.generateId(), userDetails));
-
-            messageProducer.send(new MessagePayload("register new customer", db.getCustomer(db.generateId() - 1)));
-
-            return "Customers: " + db.getCustomers();
+            messageProducer.send(new MessagePayload("Registered new customer", db.getCustomer(db.generateId() - 1)));
+            return new ResponseEntity<>(new JSONObject(db.getCustomer(db.generateId()-1).getMap()).toString(), HttpStatus.OK);
         }catch(Exception e){
-            return "ERROR: "+e.getMessage();
+            return new ResponseEntity<>("Exception happened\n"+e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/editClient")
-    public String editClient(@RequestParam int id, @RequestParam Map<String, String> userDetails){
+    public ResponseEntity<String> editClient(@RequestParam int id, @RequestParam Map<String, String> userDetails){
         try {
             verifyUserDetails(userDetails, false);
             db.editCustomer(id, userDetails);
-
-            messageProducer.send( new MessagePayload("edit existing customer", db.getCustomer(id)));
-
-            return "Customers: " +db.getCustomers();
+            messageProducer.send( new MessagePayload("Edit existing customer", db.getCustomer(id)));
+            return new ResponseEntity<>(new JSONObject(db.getCustomer(id).getMap()).toString(), HttpStatus.OK);
         } catch(Exception e) {
-            return "ERROR: "+e.getMessage();
+            return new ResponseEntity<>("Exception happened\n"+e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/attachService")
-    public String newService(@RequestParam Map<String, Object> params){
+    public ResponseEntity<String> newService(@RequestParam Map<String, Object> params){
         try {
 
             verifyAttachService(params);
             int id = Integer.parseInt((String) params.get("id"));
             Service service = Service.convert((String) params.get("service"));
-
+            Date date = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").parse(params.get("preferredDate") +" "+params.get("preferredTime"));
 
             if (service == Service.ERROR) throw new ServiceNotFoundException("Selected Service is not available");
-            db.attachService(id, service);
+            db.attachService(id, service, date);
             messageProducer.send( new MessagePayload("Attach Service: "+service.getService(), db.getCustomer(id)));
-            return "Customer: " +db.getCustomer(id);
-        } catch(CustomerNotFoundException | InvalidParamsException | ServiceNotFoundException e) {
-            return "ERROR: "+e.getMessage();
+
+            return new ResponseEntity<>(new JSONObject(db.getCustomer(id).getMap()).toString(), HttpStatus.OK);
+        } catch(CustomerNotFoundException | InvalidParamsException | JSONException | ServiceNotFoundException e) {
+            return new ResponseEntity<>("Exception happened\n"+e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch(ParseException | NullPointerException e){
+            return new ResponseEntity<>("Exception happened whilst parsing date/time\n"+e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 

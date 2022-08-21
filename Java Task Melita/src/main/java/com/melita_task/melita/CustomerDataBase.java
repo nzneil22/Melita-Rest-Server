@@ -3,10 +3,10 @@ package com.melita_task.melita;
 import com.melita_task.exceptions.CustomerNotFoundException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -23,6 +23,13 @@ public class CustomerDataBase {
         return customers.get(customers.size()-1).getId()+1;
     }
 
+    public void deleteCustomer(int id) throws CustomerNotFoundException {
+        getCustomer(id);
+        customers = customers.stream()
+                .filter(c -> c.getId() != id)
+                .collect(Collectors.toList());
+    }
+
     public Customer getCustomer(int id) throws CustomerNotFoundException {
         return customers.stream()
                 .filter(c -> c.getId() == id)
@@ -35,12 +42,12 @@ public class CustomerDataBase {
         c.updateCustomer(details);
     }
 
-    public void attachService(int id, Service service) throws CustomerNotFoundException {
-        getCustomer(id).attachService(service);
+    public void attachService(int id, Service service, Date date) throws CustomerNotFoundException, JSONException {
+        getCustomer(id).attachService(service, date);
     }
 
-    public List<String> getServices(int id) throws CustomerNotFoundException{
-        return getCustomer(id).getServices().stream().map(Service::getService).collect( Collectors.toList() );
+    public List<JSONObject> getServices(int id) throws CustomerNotFoundException{
+        return getCustomer(id).getServices();
     }
 }
 
