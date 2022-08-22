@@ -1,0 +1,14 @@
+spring:
+    application:
+        name: melita-task
+    profiles:
+        active: default
+    config:
+        import: configserver:http://localhost:8888
+        use-legacy-processing: true
+    cloud:
+        bootstrap:
+            enabled: true
+
+
+
