@@ -10,9 +10,4 @@ public interface ClientSource {
     @Output("amqpMicroService")
     MessageChannel amqpMicroServiceSend();
 
-    String LISTEN = "amqpMicroService";
-
-    @Input(LISTEN)
-    SubscribableChannel amqpMicroServiceListen();
-
 }

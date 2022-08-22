@@ -1,4 +1,4 @@
-package com.melita_task.melita;
+package com.melita_task.customerDatabase;
 
 import lombok.Data;
 import lombok.NonNull;
@@ -7,7 +7,6 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Data
 public class Customer {

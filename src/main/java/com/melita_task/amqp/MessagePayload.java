@@ -1,6 +1,6 @@
 package com.melita_task.amqp;
 
-import com.melita_task.melita.Customer;
+import com.melita_task.customerDatabase.Customer;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;

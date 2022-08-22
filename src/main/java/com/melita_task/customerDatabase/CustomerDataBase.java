@@ -1,4 +1,4 @@
-package com.melita_task.melita;
+package com.melita_task.customerDatabase;
 
 import com.melita_task.exceptions.CustomerNotFoundException;
 import lombok.Data;

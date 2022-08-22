@@ -1,9 +1,8 @@
-package com.melita_task.melita;
+package com.melita_task.customerDatabase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.melita_task.RestServer;
 import com.melita_task.exceptions.CustomerNotFoundException;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;

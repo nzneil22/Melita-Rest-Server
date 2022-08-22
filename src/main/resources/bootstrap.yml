@@ -1,6 +1,6 @@
 spring:
     application:
-        name: melita-task
+        name: melita-rest-server
     profiles:
         active: default
     config:
@@ -8,4 +8,6 @@ spring:
         use-legacy-processing: true
     cloud:
         bootstrap:
+            enabled: true
+        config:
             enabled: true
