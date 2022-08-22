@@ -5,6 +5,7 @@ import lombok.NonNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,7 +52,7 @@ public class Customer {
     public void attachService(Service service_type, Date date) throws JSONException {
         JSONObject newService = new JSONObject();
         newService.put("Service", service_type);
-        newService.put("PreferredInstallationDateTime", date);
+        newService.put("PreferredInstallationDateTime", new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(date));
         services.add(newService);
     }
 
