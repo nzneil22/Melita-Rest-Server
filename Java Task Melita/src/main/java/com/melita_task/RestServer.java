@@ -47,7 +47,7 @@ public class RestServer {
         SpringApplication.run(RestServer.class, args);
     }
 
-    @GetMapping("/registerClient")
+    @GetMapping(UriConstants.REGISTER_CLIENT)
     public ResponseEntity<String> registerClient(@RequestParam Map<String, String> userDetails){
         try {
             verifyUserDetails(userDetails, true);
@@ -59,7 +59,7 @@ public class RestServer {
         }
     }
 
-    @GetMapping("/editClient")
+    @GetMapping(UriConstants.EDIT_CLIENT)
     public ResponseEntity<String> editClient(@RequestParam int id, @RequestParam Map<String, String> userDetails){
         try {
             verifyUserDetails(userDetails, false);
@@ -71,7 +71,7 @@ public class RestServer {
         }
     }
 
-    @GetMapping("/attachService")
+    @GetMapping(UriConstants.ATTACH_SERVICE)
     public ResponseEntity<String> newService(@RequestParam Map<String, Object> params){
         try {
 
@@ -93,7 +93,7 @@ public class RestServer {
     }
 
 
-    @GetMapping("/clientServices")
+    @GetMapping(UriConstants.CLIENT_SERVICES)
     public String clientServices(@RequestParam Map<String, String> params){
         try {
             if(params.containsKey("id")){
