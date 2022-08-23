@@ -48,10 +48,10 @@ public class Customer {
         if(details.containsKey("address"))setAddress(details.get("address"));
     }
 
-    public void attachService(Service service_type, Date date) throws JSONException {
+    public void attachService(String service_type, Date date) throws JSONException {
         JSONObject newService = new JSONObject();
         newService.put("Service", service_type);
-        newService.put("PreferredInstallationDateTime", new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(date));
+        newService.put("PreferredInstallationDateTime", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(date));
         services.add(newService);
     }
 
@@ -59,7 +59,12 @@ public class Customer {
         return services;
     }
 
-    public String getServiceWithId(){ return id +": "+getServices().toString(); }
+    public JSONObject getServiceWithId() throws JSONException {
+        JSONObject newService = new JSONObject();
+        newService.put("id", id);
+        newService.put("Services", getServices().toString());
+        return newService;
+    }
 
     public Map<String, Object> getMap(){
         Map<String, Object> map = new HashMap<>();

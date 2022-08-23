@@ -42,12 +42,13 @@ public class CustomerDataBase {
         c.updateCustomer(details);
     }
 
-    public void attachService(int id, Service service, Date date) throws CustomerNotFoundException, JSONException {
+    public void attachService(int id, String service, Date date) throws CustomerNotFoundException, JSONException {
         getCustomer(id).attachService(service, date);
     }
 
     public List<JSONObject> getServices(int id) throws CustomerNotFoundException{
         return getCustomer(id).getServices();
     }
+
 }
 

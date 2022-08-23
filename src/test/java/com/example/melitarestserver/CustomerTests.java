@@ -1,17 +1,15 @@
-package com.melita_task.customerDatabase;
+package com.example.melitarestserver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.melita_task.customerDatabase.Customer;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
-
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@SpringBootTest
 class CustomerTests {
 
     @Test
@@ -63,7 +61,7 @@ class CustomerTests {
 
     @Test
     public void customerObjectAttachServiceGetService() throws JSONException {
-        customer.attachService(Service.MOB_PRE, new Date());
+        customer.attachService("MOB_PRE", new Date());
         assertThat(customer.getServices()).isNotEmpty();
     }
 

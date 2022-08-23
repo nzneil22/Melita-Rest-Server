@@ -16,6 +16,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 @Configuration
 class RestConfig
 {
+
     @Bean
     CustomerDataBase database() { return new CustomerDataBase(); }
 

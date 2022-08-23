@@ -35,6 +35,11 @@
             <artifactId>spring-cloud-starter</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.epages</groupId>
+            <artifactId>restdocs-api-spec-restassured</artifactId>
+            <version>0.16.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
         </dependency>

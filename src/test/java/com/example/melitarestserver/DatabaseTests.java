@@ -1,25 +1,21 @@
-package com.melita_task.customerDatabase;
+package com.example.melitarestserver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.melita_task.customerDatabase.Customer;
+import com.melita_task.customerDatabase.CustomerDataBase;
 import com.melita_task.exceptions.CustomerNotFoundException;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
-@SpringBootTest
 class DatabaseTests {
 
-    @Autowired
-    private CustomerDataBase database;
+    private CustomerDataBase database = new CustomerDataBase();
 
     @Test
     public void databaseExists() {
@@ -67,7 +63,7 @@ class DatabaseTests {
         assertThat(database.getCustomer(0)).isNotNull();
         assertThat(database.getServices(0)).isEmpty();
 
-        database.attachService(0, Service.MOB_PRE, new Date());
+        database.attachService(0, "MOB_PRE", new Date());
         assertThat(database.getServices(0)).isNotEmpty();
 
         database.deleteCustomer(0);
