@@ -14,3 +14,6 @@ must already be running since it provides the cloud configuration for this compo
 Components from the following repositories must also be running for the full workflow:
 * https://github.com/nzneil22/Melita-Amqp-Server
 * https://github.com/nzneil22/Melita-Message-Consumer
+
+After all the components are correctly configured and functional, the user should then run the following post-man collection:
+* https://www.getpostman.com/collections/bc09ef80dc90168b0a09
