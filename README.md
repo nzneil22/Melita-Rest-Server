@@ -6,10 +6,11 @@ Run RabbitMQ on Docker using command:
 Create IntelliJ Configuration to run `RestServer.java` using Environment > VM Options 
 * `-Dspring.cloud.config.enabled=true`
 
-The component in the following git repo must already be running since it provides the cloud configuration for this component:
+The component in the following git repo,
 * https://github.com/nzneil22/Melita-Config-Server
 
+must already be running since it provides the cloud configuration for this component.
 
-Components fom the following repositories must also be running for the full workflow:
+Components from the following repositories must also be running for the full workflow:
 * https://github.com/nzneil22/Melita-Amqp-Server
 * https://github.com/nzneil22/Melita-Message-Consumer
