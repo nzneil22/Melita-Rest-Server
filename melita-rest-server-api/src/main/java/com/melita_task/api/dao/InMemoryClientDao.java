@@ -1,0 +1,36 @@
+package com.melita_task.api.dao;
+
+import com.melita_task.api.models.Client;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@Data
+//@Service
+@NoArgsConstructor
+public class InMemoryClientDao implements ClientDao {
+
+    private MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+
+    private final List<Client> clients = new ArrayList<>();
+
+    @Override
+    public Client save(Client client) {
+        clients.add(client);
+        return client;
+    }
+
+    @Override
+    public Optional<Client> find(String id) {
+        return clients.stream()
+                .filter(c -> c.getId().equals(id))
+                .findFirst();
+    }
+
+}
+
