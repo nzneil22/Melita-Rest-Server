@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Objects.isNull;
 
@@ -26,6 +27,16 @@ public class MySqlOrderDao implements OrderDao {
     @Override
     public List<Orders> find(String id) {
         return orderRepository.findAllByCustomerUUID(id);
+    }
+
+    @Override
+    public Optional<Orders> findByOrderId(String id) {
+        return orderRepository.findAllById(id);
+    }
+
+    @Override
+    public void delete(Orders order) {
+        orderRepository.delete(order);
     }
 
 }

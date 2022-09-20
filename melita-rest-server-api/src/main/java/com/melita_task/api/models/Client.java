@@ -37,13 +37,15 @@ public class Client {
     @Embedded
     private InstallationAddress installationAddress;
 
-    public void updateClient(final FullName fullName){
+    private Boolean active = true;
+
+    public void updateClient(final FullNameUpdate fullName){
         if(nonNull(fullName.getFirstName()))this.fullName.setFirstName(fullName.getFirstName());
         if(nonNull(fullName.getMiddleName()))this.fullName.setMiddleName(fullName.getMiddleName());
         if(nonNull(fullName.getLastName()))this.fullName.setLastName(fullName.getLastName());
     }
 
-    public void updateClient(final InstallationAddress installationAddress){
+    public void updateClient(final InstallationAddressUpdate installationAddress){
         if(nonNull(installationAddress.getIsland()))this.installationAddress.setIsland(installationAddress.getIsland());
         if(nonNull(installationAddress.getTown()))this.installationAddress.setTown(installationAddress.getTown());
         if(nonNull(installationAddress.getStreet()))this.installationAddress.setStreet(installationAddress.getStreet());

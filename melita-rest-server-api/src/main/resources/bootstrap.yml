@@ -1,6 +1,6 @@
 spring:
     application:
-        name: melita-rest-server
+        name: melita-e-shop
     profiles:
         active: default
     config:

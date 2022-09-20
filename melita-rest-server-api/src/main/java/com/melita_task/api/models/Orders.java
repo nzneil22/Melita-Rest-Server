@@ -14,6 +14,8 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.UUID;
 
+import static java.util.Objects.nonNull;
+
 @Data
 @Entity
 @Builder
@@ -38,4 +40,10 @@ public class Orders {
     private Date installationDateAndTime;
 
     private String status = "Created";
+    public void updateOrder(final OrdersUpdate orderUpdate){
+        if(nonNull(orderUpdate.getServiceId()))this.serviceId = orderUpdate.getServiceId();
+        if(nonNull(orderUpdate.getLobType()))this.lobType = orderUpdate.getLobType();
+        if(nonNull(orderUpdate.getInstallationDateAndTime()))this.installationDateAndTime = orderUpdate.getInstallationDateAndTime();
+    }
+
 }

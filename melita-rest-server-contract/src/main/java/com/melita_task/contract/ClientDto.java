@@ -21,4 +21,7 @@ public class ClientDto {
 
     @Valid
     private InstallationAddressDto installationAddress;
+
+    @NonNull
+    private Boolean active;
 }
