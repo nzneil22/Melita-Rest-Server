@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Data
 @Service
@@ -21,7 +22,8 @@ public class MySqlClientDao implements ClientDao {
     }
 
     @Override
-    public Optional<Client> find(String id) {
-        return clientRepository.findById(id);
+    public Optional<Client> find(UUID id) {
+        return clientRepository.findAllById(id);
     }
+
 }

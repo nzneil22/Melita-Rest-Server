@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
+
 @Slf4j
 @ControllerAdvice()
 public class OrderTakingControllerAdvice {
@@ -16,6 +18,11 @@ public class OrderTakingControllerAdvice {
 
         return ResponseEntity.unprocessableEntity()
                 .body(new LogicalError(ex.getCode()));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<LogicalError> handleNotFoundException() {
+        return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(Throwable.class)

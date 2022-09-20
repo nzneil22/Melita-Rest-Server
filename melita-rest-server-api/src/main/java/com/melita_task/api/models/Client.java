@@ -1,16 +1,13 @@
 package com.melita_task.api.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.melita_task.contract.ClientStatus;
+import lombok.*;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.UUID;
 
 import static java.util.Objects.nonNull;
@@ -24,8 +21,9 @@ import static java.util.Objects.nonNull;
 public class Client {
 
     @Id
+    @Type(type = "uuid-char")
     @Column(columnDefinition = "char(36)")
-    private String id = UUID.randomUUID().toString();
+    private final UUID id = UUID.randomUUID();
 
     @Valid
     @NotNull
@@ -37,7 +35,11 @@ public class Client {
     @Embedded
     private InstallationAddress installationAddress;
 
-    private Boolean active = true;
+
+    private ClientStatus status = ClientStatus.ACTIVE;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Order> orders;
 
     public void updateClient(final FullNameUpdate fullName){
         if(nonNull(fullName.getFirstName()))this.fullName.setFirstName(fullName.getFirstName());

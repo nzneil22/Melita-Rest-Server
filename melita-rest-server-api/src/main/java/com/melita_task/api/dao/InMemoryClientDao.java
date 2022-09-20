@@ -9,6 +9,7 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Data
 //@Service
@@ -26,9 +27,9 @@ public class InMemoryClientDao implements ClientDao {
     }
 
     @Override
-    public Optional<Client> find(String id) {
+    public Optional<Client> find(UUID id) {
         return clients.stream()
-                .filter(c -> c.getId().equals(id))
+                .filter(c -> c.getId() == id)
                 .findFirst();
     }
 

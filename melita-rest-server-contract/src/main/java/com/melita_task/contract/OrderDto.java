@@ -3,7 +3,6 @@ package com.melita_task.contract;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import javax.validation.Valid;
 import java.util.Date;
 
 @Data
@@ -25,5 +24,5 @@ public class OrderDto {
     private Date installationDateAndTime;
 
     @NonNull
-    private String status;
+    private OrderStatus status;
 }

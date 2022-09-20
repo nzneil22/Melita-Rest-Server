@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Melita_E_Shop_Application {
+public class MelitaEShopApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Melita_E_Shop_Application.class, args);
+        SpringApplication.run(MelitaEShopApplication.class, args);
     }
 
 }

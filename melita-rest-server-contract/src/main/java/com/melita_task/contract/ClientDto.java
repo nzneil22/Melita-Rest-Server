@@ -3,8 +3,6 @@ package com.melita_task.contract;
 import lombok.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Builder
@@ -23,5 +21,5 @@ public class ClientDto {
     private InstallationAddressDto installationAddress;
 
     @NonNull
-    private Boolean active;
+    private ClientStatus status;
 }
