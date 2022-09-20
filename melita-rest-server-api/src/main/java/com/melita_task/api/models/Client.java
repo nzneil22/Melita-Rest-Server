@@ -38,7 +38,7 @@ public class Client {
 
     private ClientStatus status = ClientStatus.ACTIVE;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "client")
     private List<Order> orders;
 
     public void updateClient(final FullNameUpdate fullName){

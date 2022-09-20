@@ -74,7 +74,7 @@ public class ClientsService {
 
         Client client = verifyClient(clientId);
 
-        Order ord = new Order(
+        Order ord = new Order(client,
                 ordDto.getServiceId(),
                 ordDto.getLobType(),
                 ordDto.getInstallationDateAndTime(),

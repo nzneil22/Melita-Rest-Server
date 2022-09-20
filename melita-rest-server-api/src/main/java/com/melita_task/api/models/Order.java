@@ -17,7 +17,7 @@ import static java.util.Objects.nonNull;
 @Entity
 @Builder
 @Table(name="orders")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @AllArgsConstructor
 public class Order {
 
@@ -25,6 +25,10 @@ public class Order {
     @Type(type = "uuid-char")
     @Column(columnDefinition = "char(36)")
     private final UUID id = UUID.randomUUID();
+
+    @ManyToOne
+    @JoinColumn(name="client_id")
+    private final Client client;
 
     @NotNull
     private Integer serviceId;
