@@ -9,6 +9,6 @@ public interface ClientDao {
 
     Client save(Client client);
 
-    Optional<Client> find(UUID id);
+    Optional<Client> find(UUID clientId);
 
 }

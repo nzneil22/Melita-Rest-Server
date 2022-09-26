@@ -26,7 +26,7 @@ public class Order {
     @Column(columnDefinition = "char(36)")
     private final UUID id = UUID.randomUUID();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="client_id")
     private final Client client;
 

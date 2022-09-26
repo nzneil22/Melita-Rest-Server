@@ -3,6 +3,8 @@ package com.melita_task.contract;
 import lombok.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -12,7 +14,7 @@ public class ClientDto {
 
     @Valid
     @NonNull
-    private String id;
+    private UUID id;
 
     @Valid
     private FullNameDto fullName;
@@ -22,4 +24,6 @@ public class ClientDto {
 
     @NonNull
     private ClientStatus status;
+
+    private List<OrderDto> orders;
 }

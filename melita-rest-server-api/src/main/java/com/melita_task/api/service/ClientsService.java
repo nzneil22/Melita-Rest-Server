@@ -9,6 +9,7 @@ import com.melita_task.contract.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -18,7 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
 public class ClientsService {
 
@@ -31,7 +32,7 @@ public class ClientsService {
         Client client =  clientDao.save(mapper.map(request, Client.class));
         messageProducer.sendMessage(
                 MessagePayload.builder()
-                        .client(client)
+                        .client(mapper.map(client, ClientDto.class))
                         .alteration("Register New Client")
                         .build());
         return mapper.map(client, ClientDto.class);
@@ -53,7 +54,7 @@ public class ClientsService {
         clientDao.save(client);
         messageProducer.sendMessage(
                 MessagePayload.builder()
-                        .client(client)
+                        .client(mapper.map(client, ClientDto.class))
                         .alteration("Update Client")
                         .build());
 
@@ -134,7 +135,7 @@ public class ClientsService {
 
         messageProducer.sendMessage(
                 MessagePayload.builder()
-                        .client(client)
+                        .client(mapper.map(client, ClientDto.class))
                         .alteration("Submit Orders")
                         .build());
 
@@ -160,7 +161,7 @@ public class ClientsService {
 
         messageProducer.sendMessage(
                 MessagePayload.builder()
-                        .client(client)
+                        .client(mapper.map(client, ClientDto.class))
                         .alteration("Client Status Change")
                         .build());
 

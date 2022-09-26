@@ -1,7 +1,11 @@
 package com.melita_task.api.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.melita_task.contract.ClientStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -35,10 +39,9 @@ public class Client {
     @Embedded
     private InstallationAddress installationAddress;
 
-
     private ClientStatus status = ClientStatus.ACTIVE;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "client")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "client", fetch = FetchType.LAZY)
     private List<Order> orders;
 
     public void updateClient(final FullNameUpdate fullName){
@@ -54,4 +57,53 @@ public class Client {
         if(nonNull(installationAddress.getBuilding()))this.installationAddress.setBuilding(installationAddress.getBuilding());
     }
 
+    @Override
+    public String toString(){
+        return id.toString();
+    }
+
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof Client)) return false;
+        final Client other = (Client) o;
+        if (!other.canEqual((Object) this)) return false;
+        final Object this$id = this.getId();
+        final Object other$id = other.getId();
+        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        final Object this$fullName = this.getFullName();
+        final Object other$fullName = other.getFullName();
+        if (this$fullName == null ? other$fullName != null : !this$fullName.equals(other$fullName)) return false;
+        final Object this$installationAddress = this.getInstallationAddress();
+        final Object other$installationAddress = other.getInstallationAddress();
+        if (this$installationAddress == null ? other$installationAddress != null : !this$installationAddress.equals(other$installationAddress))
+            return false;
+        final Object this$status = this.getStatus();
+        final Object other$status = other.getStatus();
+        if (this$status == null ? other$status != null : !this$status.equals(other$status)) return false;
+//        final Object this$orders = this.getOrders();
+//        final Object other$orders = other.getOrders();
+//        if (this$orders == null ? other$orders != null : !this$orders.equals(other$orders)) return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof Client;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $id = this.getId();
+        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
+        final Object $fullName = this.getFullName();
+        result = result * PRIME + ($fullName == null ? 43 : $fullName.hashCode());
+        final Object $installationAddress = this.getInstallationAddress();
+        result = result * PRIME + ($installationAddress == null ? 43 : $installationAddress.hashCode());
+        final Object $status = this.getStatus();
+        result = result * PRIME + ($status == null ? 43 : $status.hashCode());
+//        final Object $orders = this.getOrders();
+//        result = result * PRIME + ($orders == null ? 43 : $orders.hashCode());
+        return result;
+    }
 }

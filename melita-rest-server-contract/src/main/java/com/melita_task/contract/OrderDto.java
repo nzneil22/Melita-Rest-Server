@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -11,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class OrderDto {
 
-    private String id;
+    private UUID id;
 
     @NonNull
     private Integer serviceId;
@@ -25,4 +26,7 @@ public class OrderDto {
 
     @NonNull
     private OrderStatus status;
+
+    @NonNull
+    private UUID clientId;
 }
