@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static java.util.Objects.nonNull;
@@ -20,6 +21,7 @@ import static java.util.Objects.nonNull;
 @Data
 @Entity
 @Builder
+@Table(name="clients")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Client {
@@ -67,24 +69,23 @@ public class Client {
         if (o == this) return true;
         if (!(o instanceof Client)) return false;
         final Client other = (Client) o;
-        if (!other.canEqual((Object) this)) return false;
+        if (!other.canEqual(this)) return false;
         final Object this$id = this.getId();
         final Object other$id = other.getId();
-        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        if (!Objects.equals(this$id, other$id)) return false;
         final Object this$fullName = this.getFullName();
         final Object other$fullName = other.getFullName();
-        if (this$fullName == null ? other$fullName != null : !this$fullName.equals(other$fullName)) return false;
+        if (!Objects.equals(this$fullName, other$fullName)) return false;
         final Object this$installationAddress = this.getInstallationAddress();
         final Object other$installationAddress = other.getInstallationAddress();
-        if (this$installationAddress == null ? other$installationAddress != null : !this$installationAddress.equals(other$installationAddress))
+        if (!Objects.equals(this$installationAddress, other$installationAddress))
             return false;
         final Object this$status = this.getStatus();
         final Object other$status = other.getStatus();
-        if (this$status == null ? other$status != null : !this$status.equals(other$status)) return false;
+        return Objects.equals(this$status, other$status);
 //        final Object this$orders = this.getOrders();
 //        final Object other$orders = other.getOrders();
 //        if (this$orders == null ? other$orders != null : !this$orders.equals(other$orders)) return false;
-        return true;
     }
 
     protected boolean canEqual(final Object other) {

@@ -1,8 +1,9 @@
 package com.melita_task.api.controllers;
 
-import com.melita_task.api.models.FullNameUpdate;
-import com.melita_task.api.models.InstallationAddressUpdate;
-import com.melita_task.api.models.OrdersUpdate;
+import com.melita_task.api.amqp.AMQPBindings;
+import com.melita_task.api.amqp.MessagePayload;
+import com.melita_task.api.dao.ClientDao;
+import com.melita_task.api.models.*;
 import com.melita_task.api.service.ClientsService;
 import com.melita_task.contract.ClientDto;
 import com.melita_task.contract.ClientStatus;
@@ -11,6 +12,7 @@ import com.melita_task.contract.OrderDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -28,11 +33,14 @@ public class CustomersController {
     private final MapperFacade mapper;
     private final ClientsService clientService;
 
+    private final ClientDao clientDao;
+
+
 
     @PostMapping
     public ClientDto createCustomer(@RequestBody @NotNull @Valid final NewClientRequestDto newClientRequest) {
         log.info("Received request to register new client: {}", newClientRequest);
-        return clientService.registerClient(newClientRequest);
+        return mapper.map(clientService.registerClient(newClientRequest), ClientDto.class);
     }
 
     @GetMapping(path = "/{clientId}")
@@ -59,33 +67,41 @@ public class CustomersController {
     public ClientDto editCustomerFullName(@PathVariable @NotNull final UUID clientId,
                                           @RequestBody @Valid final FullNameUpdate fullName) {
         log.info("Received request to edit client with id: {} using full-name: {}", clientId, fullName);
-        return clientService.updateClient(clientId, fullName, null);
+        return mapper.map(clientService.updateClient(clientId, fullName, null), ClientDto.class);
     }
 
     @PutMapping(path = "/{clientId}/installation-address")
     public ClientDto editCustomerFullName(@PathVariable @NotNull final UUID clientId,
                                           @RequestBody @Valid final InstallationAddressUpdate installationAddress) {
         log.info("Received request to edit client with id: {} using installation-address: {}", clientId, installationAddress);
-        return clientService.updateClient(clientId, null, installationAddress);
+        return mapper.map(clientService.updateClient(clientId, null, installationAddress), ClientDto.class);
     }
 
     @PostMapping("/{clientId}/orders")
     public OrderDto addOrder(@PathVariable @NotNull final UUID clientId,
                              @RequestBody @NotNull @Valid final OrderDto order) {
         log.info("Received request to add order to client with id: {}", clientId);
-        return clientService.addOrder(clientId, order);
+        return mapper.map(clientService.addOrder(clientId, mapper.map(order, Order.class)), OrderDto.class);
     }
 
     @GetMapping("/{clientId}/orders")
     public List<OrderDto> getOrders(@PathVariable @NotNull final UUID clientId) {
         log.info("Received request to get orders of client with id: {}", clientId);
-        return clientService.getClientOrders(clientId);
+        return clientService
+                .getClientOrders(clientId)
+                .stream()
+                .map(o -> mapper.map(o, OrderDto.class))
+                .collect(Collectors.toList());
     }
 
     @PutMapping("/{clientId}/orders/submit")
     public List<OrderDto> submitClientOrders(@PathVariable @NotNull final UUID clientId){
         log.info("Received request to submit all orders of client with id: {}", clientId);
-        return clientService.submitOrders(clientId);
+        return clientService
+                .submitOrders(clientId)
+                .stream()
+                .map(o -> mapper.map(o, OrderDto.class))
+                .collect(Collectors.toList());
     }
 
     @PutMapping("/{clientId}/orders/{orderId}")
@@ -93,7 +109,7 @@ public class CustomersController {
                               @PathVariable @NotNull final UUID orderId,
                               @RequestBody @NotNull OrdersUpdate oUpdate) {
         log.info("Received request to edit order: {} of client: {}", orderId, clientId);
-        return clientService.editOrder(clientId, orderId, oUpdate);
+        return mapper.map(clientService.editOrder(clientId, orderId, oUpdate), OrderDto.class);
     }
 
     @DeleteMapping("/{clientId}/orders/{orderId}")
@@ -107,7 +123,6 @@ public class CustomersController {
     public ClientDto clientStatus(@PathVariable @NotNull final UUID clientId,
                                   @RequestBody @NotNull @Valid final ClientStatus status) {
         log.info("Received request to change state of client: {}", clientId);
-        return clientService.clientStatus(clientId, status);
+        return mapper.map(clientService.clientStatus(clientId, status), ClientDto.class);
     }
-
 }

@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
+      id: Create_Table_Clients
       author: neilb
       changes:
         - createTable:
-            tableName: client
+            tableName: clients
             columns:
               - column:
                   name: id
@@ -63,7 +63,7 @@ databaseChangeLog:
 
 
   - changeSet:
-      id: 2
+      id: Create_Table_Orders
       author: neilb
       changes:
         - createTable:

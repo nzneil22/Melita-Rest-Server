@@ -17,7 +17,7 @@ import static java.util.Objects.nonNull;
 @Entity
 @Builder
 @Table(name="orders")
-@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Order {
 

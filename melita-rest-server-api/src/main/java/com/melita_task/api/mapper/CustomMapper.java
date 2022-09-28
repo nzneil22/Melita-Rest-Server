@@ -1,8 +1,9 @@
-package com.melita_task.api.models.mapper;
+package com.melita_task.api.mapper;
 
 import com.melita_task.api.models.Client;
 import com.melita_task.api.models.Order;
 import com.melita_task.contract.ClientDto;
+import com.melita_task.contract.ClientDtoRabbit;
 import com.melita_task.contract.NewClientRequestDto;
 import com.melita_task.contract.OrderDto;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,9 @@ public class CustomMapper extends ConfigurableMapper {
                 .byDefault()
                 .register();
 
+        factory.classMap(Client.class, ClientDtoRabbit.class)
+                .byDefault()
+                .register();
 
     }
 }

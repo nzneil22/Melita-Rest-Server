@@ -3,6 +3,8 @@ package com.melita_task.api.dao;
 import com.melita_task.api.models.Client;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -28,11 +30,15 @@ public class MySqlClientDao implements ClientDao {
     }
 
     @Override
-    public Optional<Client> find(UUID clientId) {
-        return transactionTemplate.execute(s -> {
+    public Optional<Client> find(UUID clientId, boolean initializeOrders) {
 
-            return clientRepository.findById(clientId);
-        });
+        Optional<Client> c = clientRepository.findById(clientId);
+        if(initializeOrders && c.isPresent()) Hibernate.initialize(c.get().getOrders());
+
+        return c;
+
     }
+
+
 
 }

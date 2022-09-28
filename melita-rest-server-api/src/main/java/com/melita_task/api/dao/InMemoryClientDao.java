@@ -27,7 +27,7 @@ public class InMemoryClientDao implements ClientDao {
     }
 
     @Override
-    public Optional<Client> find(UUID id) {
+    public Optional<Client> find(UUID id, boolean init) {
         return clients.stream()
                 .filter(c -> c.getId() == id)
                 .findFirst();
