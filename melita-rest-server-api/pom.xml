@@ -7,6 +7,7 @@
         <groupId>com.example</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>melita-rest-server-api</artifactId>
@@ -150,16 +151,14 @@
         </dependency>
 
         <dependency>
-            <groupId>com.spotify</groupId>
-            <artifactId>completable-futures</artifactId>
-            <version>0.3.5</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
-
 
     </dependencies>
 

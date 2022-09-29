@@ -8,13 +8,16 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Data
 @Builder
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
-public class FullName {
+public class FullName implements Serializable {
+
+    private static final long serialVersionUID = 5729326052027232453L;
 
     @NotBlank
     private String firstName;

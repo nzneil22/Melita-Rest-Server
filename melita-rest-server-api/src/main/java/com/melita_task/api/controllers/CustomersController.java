@@ -33,10 +33,6 @@ public class CustomersController {
     private final MapperFacade mapper;
     private final ClientsService clientService;
 
-    private final ClientDao clientDao;
-
-
-
     @PostMapping
     public ClientDto createCustomer(@RequestBody @NotNull @Valid final NewClientRequestDto newClientRequest) {
         log.info("Received request to register new client: {}", newClientRequest);
@@ -45,7 +41,7 @@ public class CustomersController {
 
     @GetMapping(path = "/{clientId}")
     public ResponseEntity<ClientDto> getCustomer(@PathVariable final UUID clientId) {
-        log.info("Received request to edit client with id: {}", clientId);
+        log.info("Received request to get client with id: {}", clientId);
         // if service returns empty optional, respond with 404
         return clientService.findClient(clientId)
                 .map(client -> mapper.map(client, ClientDto.class))
@@ -71,7 +67,7 @@ public class CustomersController {
     }
 
     @PutMapping(path = "/{clientId}/installation-address")
-    public ClientDto editCustomerFullName(@PathVariable @NotNull final UUID clientId,
+    public ClientDto editCustomerInstallationAddress(@PathVariable @NotNull final UUID clientId,
                                           @RequestBody @Valid final InstallationAddressUpdate installationAddress) {
         log.info("Received request to edit client with id: {} using installation-address: {}", clientId, installationAddress);
         return mapper.map(clientService.updateClient(clientId, null, installationAddress), ClientDto.class);

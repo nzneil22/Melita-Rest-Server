@@ -7,13 +7,16 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 @Data
 @Builder
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
-public class InstallationAddress {
+public class InstallationAddress implements Serializable {
+
+    private static final long serialVersionUID = 485566624809270330L;
 
     @NotBlank
     private String island;

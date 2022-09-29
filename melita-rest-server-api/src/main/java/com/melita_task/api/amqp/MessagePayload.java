@@ -17,5 +17,4 @@ import java.util.UUID;
 public class MessagePayload {
     private String alteration;
     private ClientDtoRabbit client;
-    private UUID clientId;
 }

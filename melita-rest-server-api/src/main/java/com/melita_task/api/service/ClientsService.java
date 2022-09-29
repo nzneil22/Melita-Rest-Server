@@ -1,6 +1,5 @@
 package com.melita_task.api.service;
 
-import com.melita_task.api.amqp.AMQPBindings;
 import com.melita_task.api.amqp.MessagePayload;
 import com.melita_task.api.amqp.MessageProducer;
 import com.melita_task.api.dao.ClientDao;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.hibernate.Hibernate;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityNotFoundException;
@@ -31,7 +29,7 @@ public class ClientsService {
 
     private final MapperFacade mapper;
     private final ClientDao clientDao;
-
+    private final ProductCatalogService productCatalogService;
     private final MessageProducer messageProducer;
 
     public Client registerClient(final NewClientRequestDto request) {
@@ -45,7 +43,7 @@ public class ClientsService {
     }
 
     public Optional<Client> findClient(final UUID id) {
-        return clientDao.find(id, false);
+        return clientDao.find(id, true);
     }
 
     public Client updateClient(final UUID clientId,
@@ -71,21 +69,15 @@ public class ClientsService {
 
         Client c = verifyClient(clientId);
 
-        messageProducer.sendMessage(
-                MessagePayload.builder()
-                        .clientId(clientId)
-                        .alteration("Lazy Test")
-                        .build());
-
-
-        Hibernate.initialize(c.getOrders());
-
         return c.getOrders();
     }
 
     public Order addOrder(final UUID clientId, final Order ordDto) {
 
         Client client = verifyClient(clientId);
+
+        if(!productCatalogService.isServiceIdValid(ordDto.getServiceId()))
+            throw new InvalidServiceIdException();
 
         Order ord = new Order(client,
                 ordDto.getServiceId(),
@@ -104,12 +96,16 @@ public class ClientsService {
 
         Client client = verifyClient(clientId);
 
+        if(oUpdate.getServiceId() != null && !productCatalogService.isServiceIdValid(oUpdate.getServiceId()))
+            throw new InvalidServiceIdException();
+
         Order ord = client.getOrders().stream()
                 .filter(o -> o.getId().equals(orderId))
                 .findFirst()
                 .orElseThrow(EntityNotFoundException::new);
 
-        if (ord.getStatus().equals(OrderStatus.SUBMITTED)) throw new OrderSubmittedException();
+        if (ord.getStatus().equals(OrderStatus.SUBMITTED))
+            throw new OrderSubmittedException();
 
         ord.updateOrder(oUpdate);
 
@@ -128,7 +124,8 @@ public class ClientsService {
                 .findFirst()
                 .orElseThrow(EntityNotFoundException::new);
 
-        if (ord.getStatus().equals(OrderStatus.SUBMITTED)) throw new OrderSubmittedException();
+        if (ord.getStatus().equals(OrderStatus.SUBMITTED))
+            throw new OrderSubmittedException();
 
         client.getOrders().remove(ord);
 
@@ -188,12 +185,4 @@ public class ClientsService {
         return client;
     }
 
-    @StreamListener(target = AMQPBindings.LISTEN)
-    public void onMessage(MessagePayload msg) {
-        log.info("{}", clientDao
-                .find(msg.getClientId(), true)
-                .orElseThrow()
-                .getOrders());
-
-    }
 }

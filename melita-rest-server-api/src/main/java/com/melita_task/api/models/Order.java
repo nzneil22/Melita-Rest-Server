@@ -8,6 +8,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
@@ -19,7 +20,9 @@ import static java.util.Objects.nonNull;
 @Table(name="orders")
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-public class Order {
+public class Order implements Serializable {
+
+    private static final long serialVersionUID = -4637879873751452776L;
 
     @Id
     @Type(type = "uuid-char")

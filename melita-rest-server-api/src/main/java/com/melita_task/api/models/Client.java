@@ -11,6 +11,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -24,7 +25,9 @@ import static java.util.Objects.nonNull;
 @Table(name="clients")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Client {
+public class Client implements Serializable {
+
+    private static final long serialVersionUID = 8977477093018286915L;
 
     @Id
     @Type(type = "uuid-char")

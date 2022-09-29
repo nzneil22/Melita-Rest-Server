@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Data
-//@Service
+@Service
+@Profile("in-memory")
 @NoArgsConstructor
 public class InMemoryClientDao implements ClientDao {
 

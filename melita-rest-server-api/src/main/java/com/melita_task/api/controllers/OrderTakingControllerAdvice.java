@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
 @Slf4j
@@ -26,10 +27,11 @@ public class OrderTakingControllerAdvice {
     }
 
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<LogicalError> handleException(final Throwable ex) {
+    public ResponseEntity<Void> handleException(final Throwable ex) {
 
+        log.error("General Error Occurred", ex);
         return ResponseEntity.internalServerError()
-                .body(new LogicalError(ex.getMessage()));
+                .build();
     }
 
 }

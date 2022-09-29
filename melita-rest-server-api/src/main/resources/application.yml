@@ -5,6 +5,14 @@ spring:
     username: guest
     password: guest
 
+  cache:
+    type: redis
+
+  redis:
+    host: localhost
+    port: 6379
+    password: guest
+
   jpa:
     hibernate:
       ddl-auto: validate
