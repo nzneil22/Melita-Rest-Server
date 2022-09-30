@@ -1,9 +1,9 @@
 package com.melita_task.api.controllers;
 
-import com.melita_task.api.amqp.AMQPBindings;
-import com.melita_task.api.amqp.MessagePayload;
-import com.melita_task.api.dao.ClientDao;
-import com.melita_task.api.models.*;
+import com.melita_task.api.models.FullNameUpdate;
+import com.melita_task.api.models.InstallationAddressUpdate;
+import com.melita_task.api.models.Order;
+import com.melita_task.api.models.OrdersUpdate;
 import com.melita_task.api.service.ClientsService;
 import com.melita_task.contract.ClientDto;
 import com.melita_task.contract.ClientStatus;
@@ -12,7 +12,6 @@ import com.melita_task.contract.OrderDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +19,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Slf4j

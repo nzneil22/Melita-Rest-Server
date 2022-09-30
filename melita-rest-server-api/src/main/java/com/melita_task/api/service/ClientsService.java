@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.hibernate.Hibernate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityNotFoundException;
@@ -32,6 +33,7 @@ public class ClientsService {
     private final ProductCatalogService productCatalogService;
     private final MessageProducer messageProducer;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public Client registerClient(final NewClientRequestDto request) {
         Client client = clientDao.save(mapper.map(request, Client.class));
         messageProducer.sendMessage(
@@ -42,10 +44,12 @@ public class ClientsService {
         return client;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public Optional<Client> findClient(final UUID id) {
         return clientDao.find(id, true);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public Client updateClient(final UUID clientId,
                                final FullNameUpdate fullName,
                                final InstallationAddressUpdate installationAddress) {
@@ -65,6 +69,7 @@ public class ClientsService {
         return client;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<Order> getClientOrders(final UUID clientId) {
 
         Client c = verifyClient(clientId);
@@ -72,6 +77,7 @@ public class ClientsService {
         return c.getOrders();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public Order addOrder(final UUID clientId, final Order ordDto) {
 
         Client client = verifyClient(clientId);
@@ -92,6 +98,7 @@ public class ClientsService {
         return ord;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public Order editOrder(final UUID clientId, final UUID orderId, final OrdersUpdate oUpdate) {
 
         Client client = verifyClient(clientId);
@@ -114,6 +121,7 @@ public class ClientsService {
         return ord;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public String cancelOrder(final UUID clientId, final UUID orderId) {
 
         Client client = verifyClient(clientId);
@@ -134,6 +142,7 @@ public class ClientsService {
         return "Deleted Order with id: " + orderId;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<Order> submitOrders(final UUID clientId) {
 
         Client client = verifyClient(clientId);
@@ -155,6 +164,7 @@ public class ClientsService {
         return client.getOrders();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public Client clientStatus(final UUID clientId, final ClientStatus cStatus) {
         Client client = clientDao.find(clientId, false).orElseThrow(ClientNotFoundException::new);
 
