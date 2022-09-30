@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ProdCatalogBean {
+public class  ProdCatalogBean {
     private final List<Integer> prodCatalog = new ArrayList<>();
 
     @SneakyThrows

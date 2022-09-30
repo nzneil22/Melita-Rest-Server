@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -20,10 +21,8 @@ import static java.util.Objects.nonNull;
 
 @Data
 @Entity
-@Builder
 @Table(name="clients")
 @NoArgsConstructor
-@AllArgsConstructor
 public class Client implements Serializable {
 
     private static final long serialVersionUID = 8977477093018286915L;
@@ -59,6 +58,16 @@ public class Client implements Serializable {
         if(nonNull(installationAddress.getTown()))this.installationAddress.setTown(installationAddress.getTown());
         if(nonNull(installationAddress.getStreet()))this.installationAddress.setStreet(installationAddress.getStreet());
         if(nonNull(installationAddress.getBuilding()))this.installationAddress.setBuilding(installationAddress.getBuilding());
+    }
+
+    public Client(final FullName fullName,
+                  final InstallationAddress installationAddress){
+
+        this.fullName = fullName;
+        this.installationAddress = installationAddress;
+
+        this.status = ClientStatus.ACTIVE;
+        this.orders = new ArrayList<>();
     }
 
     @Override

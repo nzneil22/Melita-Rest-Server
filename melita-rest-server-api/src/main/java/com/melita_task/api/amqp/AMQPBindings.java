@@ -13,9 +13,4 @@ public interface AMQPBindings {
     @Output("crmQueue")
     MessageChannel crmQueueSend();
 
-    String LISTEN = "crmQueue";
-
-    @Input(LISTEN)
-    SubscribableChannel amqpMicroServiceListen();
-
 }
