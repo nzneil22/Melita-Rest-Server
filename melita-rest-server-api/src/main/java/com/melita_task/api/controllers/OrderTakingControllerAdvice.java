@@ -3,11 +3,9 @@ package com.melita_task.api.controllers;
 import com.melita_task.api.exceptions.LogicalError;
 import com.melita_task.api.exceptions.LogicalErrorException;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

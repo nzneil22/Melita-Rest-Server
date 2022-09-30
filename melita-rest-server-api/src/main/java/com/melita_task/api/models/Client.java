@@ -1,6 +1,5 @@
 package com.melita_task.api.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.melita_task.contract.ClientStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

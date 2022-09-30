@@ -3,7 +3,10 @@ package com.melita_task.api.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.melita_task.contract.LobTypes;
 import com.melita_task.contract.OrderStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;

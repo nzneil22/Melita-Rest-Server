@@ -3,7 +3,6 @@ package com.melita_task.api.controllers;
 import com.melita_task.api.service.ProductCatalogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;

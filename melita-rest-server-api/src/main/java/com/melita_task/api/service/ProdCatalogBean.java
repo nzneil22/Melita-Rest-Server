@@ -1,7 +1,5 @@
 package com.melita_task.api.service;
 
-import com.melita_task.api.exceptions.ServiceIdExistsException;
-import lombok.Data;
 import lombok.SneakyThrows;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
