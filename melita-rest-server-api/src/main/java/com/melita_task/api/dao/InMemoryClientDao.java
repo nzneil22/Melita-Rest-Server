@@ -1,6 +1,7 @@
 package com.melita_task.api.dao;
 
 import com.melita_task.api.models.Client;
+import com.melita_task.api.models.Order;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ma.glasnost.orika.MapperFactory;
@@ -30,10 +31,30 @@ public class InMemoryClientDao implements ClientDao {
     }
 
     @Override
-    public Optional<Client> find(UUID id, boolean init) {
+    public Optional<Client> findClient(UUID id, boolean init) {
         return clients.stream()
                 .filter(c -> c.getId() == id)
                 .findFirst();
+    }
+
+    @Override
+    public Optional<Client> findClientForUpdate(UUID clientId, boolean initialize) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Order> findOrder(UUID clientId, UUID orderId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Order> findOrderForUpdate(UUID clientId, UUID orderId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Order saveOrder(Order order) {
+        return null;
     }
 
 }

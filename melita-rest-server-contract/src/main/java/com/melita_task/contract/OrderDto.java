@@ -1,6 +1,8 @@
 package com.melita_task.contract;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.melita_task.contract.enums.LobTypes;
+import com.melita_task.contract.enums.OrderStatus;
 import lombok.*;
 
 import java.util.Date;

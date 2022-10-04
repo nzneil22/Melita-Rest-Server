@@ -1,5 +1,7 @@
 package com.melita_task.api.amqp;
 
+import com.melita_task.contract.enums.EventTypes;
+import com.melita_task.contract.events.EventDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +18,10 @@ public class MessageProducer {
 	@Autowired
 	private AMQPBindings cs;
 
+	public void sendEvent(EventTypes type, EventDto payload){}
+
 	public void sendMessage(MessagePayload mp){
-		log.info("AMQP Send - " + mp.getAlteration());
+//		log.info("AMQP Send - " + mp.getAlteration());
 		cs.crmQueueSend().send(MessageBuilder.withPayload(mp).build());
 	}
 

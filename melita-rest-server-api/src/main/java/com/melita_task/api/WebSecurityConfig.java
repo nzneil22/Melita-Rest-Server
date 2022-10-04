@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
@@ -18,8 +20,19 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+public
 class WebSecurityConfig extends GlobalMethodSecurityConfiguration
 {
+
+    public CommonsRequestLoggingFilter logFilter() {
+        CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
+        filter.setIncludeQueryString(true);
+        filter.setIncludePayload(true);
+        filter.setMaxPayloadLength(10000);
+        filter.setIncludeHeaders(false);
+        filter.setAfterMessagePrefix("REQUEST DATA : ");
+        return filter;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,8 +45,9 @@ class WebSecurityConfig extends GlobalMethodSecurityConfiguration
                 .httpBasic()
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(STATELESS);
-
+                .sessionCreationPolicy(STATELESS)
+                .and()
+                .addFilterBefore(logFilter(), BasicAuthenticationFilter.class);
         return http.build();
     }
 

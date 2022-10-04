@@ -1,5 +1,6 @@
 package com.melita_task.api.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -10,13 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class  ProdCatalogBean {
     private final List<Integer> prodCatalog = new ArrayList<>();
 
     @SneakyThrows
     @Cacheable(value = "prodCatalog", key = "'catalog'")
     public List<Integer> getProductCatalog(){
-        Thread.sleep(5000);
+//        Thread.sleep(5000);
         return prodCatalog;
     }
     @CachePut(value = "prodCatalog", key = "'catalog'")

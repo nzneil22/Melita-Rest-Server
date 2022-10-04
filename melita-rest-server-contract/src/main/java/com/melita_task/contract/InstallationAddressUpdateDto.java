@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 @Data
@@ -13,13 +14,21 @@ import javax.validation.constraints.NotBlank;
 @Validated
 @NoArgsConstructor
 @AllArgsConstructor
-public class FullNameDto {
+public class InstallationAddressUpdateDto {
 
+    @Valid
     @NotBlank
-    private String firstName;
+    private String island;
 
-    private String middleName;
-
+    @Valid
     @NotBlank
-    private String lastName;
+    private String town;
+
+    @Valid
+    @NotBlank
+    private String street;
+
+    @Valid
+    @NotBlank
+    private String building;
 }

@@ -1,4 +1,4 @@
-package com.melita_task.api.models;
+package com.melita_task.contract;
 
 import com.melita_task.contract.annotations.NotBlankIfDefined;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-public class FullNameUpdate {
+public class FullNameUpdateDto {
 
     @NotBlankIfDefined
     private final String firstName;

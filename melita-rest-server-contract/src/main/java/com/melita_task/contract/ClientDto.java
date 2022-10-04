@@ -1,6 +1,6 @@
 package com.melita_task.contract;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.melita_task.contract.enums.ClientStatus;
 import lombok.*;
 
 import javax.validation.Valid;

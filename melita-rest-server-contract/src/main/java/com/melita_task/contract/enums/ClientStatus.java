@@ -1,4 +1,4 @@
-package com.melita_task.contract;
+package com.melita_task.contract.enums;
 
 public enum ClientStatus {
     INACTIVE,

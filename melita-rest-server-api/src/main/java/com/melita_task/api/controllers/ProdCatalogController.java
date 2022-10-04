@@ -19,7 +19,7 @@ public class ProdCatalogController {
     @GetMapping
     public List<Integer> getProdCatalog() {
         log.info("Received request to get product catalog");
-        return productCatalogService.getProductCatalog();
+        return productCatalogService.getProdCatalog();
     }
 
     @PostMapping("/{id}")
