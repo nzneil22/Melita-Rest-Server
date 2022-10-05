@@ -31,14 +31,16 @@ public class Order {
     private final Client client;
 
     @NotNull
-    private Integer serviceId;
+    private int serviceId;
 
     @NotNull
+    @Enumerated(value = EnumType.STRING)
     private LobTypes lobType;
 
     @NotNull
     private Date installationDateAndTime;
 
+    @Enumerated(value = EnumType.STRING)
     private OrderStatus status;
 
     public Order(final Client client,

@@ -1,5 +1,6 @@
 package com.melita_task.api.controllers;
 
+import com.melita_task.api.amqp.MessageProducer;
 import com.melita_task.api.models.FullNameUpdate;
 import com.melita_task.api.models.InstallationAddressUpdate;
 import com.melita_task.api.models.requests.CreateClientRequest;
@@ -7,6 +8,8 @@ import com.melita_task.api.models.requests.UpdateClientRequest;
 import com.melita_task.api.service.ClientService;
 import com.melita_task.contract.ClientDto;
 import com.melita_task.contract.enums.ClientStatus;
+import com.melita_task.contract.events.CreateClientEventDto;
+import com.melita_task.contract.events.UpdateClientEventDto;
 import com.melita_task.contract.requests.CreateClientRequestDto;
 import com.melita_task.contract.requests.UpdateClientRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ClientController {
 
+    private final MessageProducer messageProducer;
+
     private final MapperFacade mapper;
     private final ClientService clientService;
 
@@ -33,13 +38,17 @@ public class ClientController {
 
         final CreateClientRequest request = mapper.map(requestDto, CreateClientRequest.class);
 
-        return mapper.map(clientService.registerClient(request), ClientDto.class);
+        final ClientDto clientDto = mapper.map(clientService.registerClient(request), ClientDto.class);
+
+        messageProducer.sendEvent(new CreateClientEventDto(clientDto));
+
+        return clientDto;
     }
 
     @GetMapping(path = "/{clientId}")
     public ResponseEntity<ClientDto> getClient(@PathVariable final UUID clientId) {
         // if service returns empty optional, respond with 404
-        return clientService.findClient(clientId)
+        return clientService.findClient(clientId, true)
                 .map(client -> mapper.map(client, ClientDto.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -66,12 +75,21 @@ public class ClientController {
 
         final UpdateClientRequest request = new UpdateClientRequest(fullNameUpdate, installationAddressUpdate);
 
-        return mapper.map(clientService.updateClient(clientId, request), ClientDto.class);
+        final ClientDto clientDto = mapper.map(clientService.updateClient(clientId, request), ClientDto.class);
+
+        messageProducer.sendEvent(new UpdateClientEventDto(clientDto));
+
+        return clientDto;
     }
 
     @PutMapping("/{clientId}/status")
     public ClientDto clientStatus(@PathVariable @NotNull final UUID clientId,
                                   @RequestBody @NotNull @Valid final ClientStatus status) {
-        return mapper.map(clientService.clientStatus(clientId, status), ClientDto.class);
+
+        final ClientDto clientDto = mapper.map(clientService.clientStatus(clientId, status), ClientDto.class);
+
+        messageProducer.sendEvent(new UpdateClientEventDto(clientDto));
+
+        return clientDto;
     }
 }

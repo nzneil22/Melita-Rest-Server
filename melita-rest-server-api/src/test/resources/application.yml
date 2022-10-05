@@ -2,8 +2,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: e_shop
+    open-in-view: false
+
+  liquibase:
+    default-schema: e_shop
+
   datasource:
       driver-class-name: org.h2.Driver
-      url: jdbc:h2:mem:e_shop;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+      url: jdbc:h2:mem:e_shop;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS E_SHOP
       username: sa
       password:

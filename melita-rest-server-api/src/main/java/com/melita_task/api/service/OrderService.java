@@ -1,16 +1,14 @@
 package com.melita_task.api.service;
 
-import com.melita_task.api.amqp.MessagePayload;
 import com.melita_task.api.amqp.MessageProducer;
 import com.melita_task.api.dao.ClientDao;
+import com.melita_task.api.dao.OrderDao;
 import com.melita_task.api.exceptions.InvalidServiceIdException;
 import com.melita_task.api.exceptions.OrderSubmittedException;
 import com.melita_task.api.models.Client;
 import com.melita_task.api.models.Order;
 import com.melita_task.api.models.requests.CreateOrderRequest;
 import com.melita_task.api.models.requests.UpdateOrderRequest;
-import com.melita_task.contract.ClientDtoRabbit;
-import com.melita_task.contract.enums.EventTypes;
 import com.melita_task.contract.enums.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,17 +28,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private final MapperFacade mapper;
     private final ClientDao clientDao;
+    private final OrderDao orderDao;
     private final ProductCatalogService productCatalogService;
-    private final MessageProducer messageProducer;
     private final ClientService clientService;
 
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<Order> getClientOrders(final UUID clientId) throws EntityNotFoundException{
 
-        final Client c = clientService.verifyClient(clientId);
+        final Client c = clientService.verifyClientForUpdate(clientId);
 
         return c.getOrders();
     }
@@ -48,7 +45,7 @@ public class OrderService {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public Order addOrder(final UUID clientId, final CreateOrderRequest request) {
 
-        final Client client = clientService.verifyClient(clientId);
+        final Client client = clientService.verifyClientForUpdate(clientId);
 
         if (!productCatalogService.isServiceIdValid(request.getServiceId())){
             log.error("Service id [{}] is not found within the product catalog", request.getServiceId());
@@ -66,7 +63,7 @@ public class OrderService {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public Order editOrder(final UUID clientId, final UUID orderId, final UpdateOrderRequest oUpdate) {
 
-        final Client client = clientService.verifyClient(clientId);
+        final Client client = clientService.verifyClientForUpdate(clientId);
 
         if(oUpdate.getServiceId().isPresent()){
             if(!productCatalogService.isServiceIdValid(oUpdate.getServiceId().get())) {
@@ -77,7 +74,7 @@ public class OrderService {
 
         final Order order = verifyOrder(client, orderId);
 
-        if (order.getStatus().equals(OrderStatus.SUBMITTED)) {
+        if (OrderStatus.SUBMITTED.equals(order.getStatus())) {
             log.error("Order [{}] is already submitted and hence cannot be edited", orderId);
             throw new OrderSubmittedException();
         }
@@ -87,14 +84,14 @@ public class OrderService {
 
         order.updateOrder(oUpdate);
 
-        return clientDao.saveOrder(order);
+        return orderDao.saveOrder(order);
 
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public String cancelOrder(final UUID clientId, final UUID orderId) {
 
-        final Client client = clientService.verifyClient(clientId);
+        final Client client = clientService.verifyClientForUpdate(clientId);
 
         final Order order = verifyOrder(client, orderId);
 
@@ -111,36 +108,28 @@ public class OrderService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public List<Order> submitOrders(final UUID clientId) {
+    public Client submitOrders(final UUID clientId) {
 
-        final Client client = clientService.verifyClient(clientId);
+        final Client client = clientService.verifyClientForUpdate(clientId);
 
         client.getOrders().stream()
                 .filter(o -> o.getStatus().equals(OrderStatus.CREATED))
                 .forEach(o -> o.setStatus(OrderStatus.SUBMITTED));
 
-        messageProducer.sendMessage(
-                MessagePayload.builder()
-                        .client(mapper.map(client, ClientDtoRabbit.class))
-                        .event(EventTypes.ORDER_SUBMIT)
-                        .build());
-
         clientDao.save(client);
 
         Hibernate.initialize(client.getOrders());
 
-        return client.getOrders();
+        return client;
     }
 
     Order verifyOrder(final Client client, final UUID orderId){
 
-        final Order order = clientDao.findOrderForUpdate(client.getId(), orderId)
+        return orderDao.findOrderForUpdate(orderId, client.getId())
                 .orElseThrow(() -> {
                     log.error("Could not resolve Order [{}] belonging to Client [{}]", orderId, client.getId());
-                    return new IllegalStateException();
+                    return new EntityNotFoundException("ORDER_NOT_FOUND");
                 });
-
-        return order;
 
     }
 

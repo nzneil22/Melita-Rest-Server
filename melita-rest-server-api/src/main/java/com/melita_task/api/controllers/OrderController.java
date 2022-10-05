@@ -1,9 +1,14 @@
 package com.melita_task.api.controllers;
 
+import com.melita_task.api.amqp.MessageProducer;
+import com.melita_task.api.models.Client;
+import com.melita_task.api.models.Order;
 import com.melita_task.api.models.requests.CreateOrderRequest;
 import com.melita_task.api.models.requests.UpdateOrderRequest;
 import com.melita_task.api.service.OrderService;
+import com.melita_task.contract.ClientDto;
 import com.melita_task.contract.OrderDto;
+import com.melita_task.contract.events.SubmitOrdersEventDto;
 import com.melita_task.contract.requests.CreateOrderRequestDto;
 import com.melita_task.contract.requests.UpdateOrderRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderController {
 
+    private final MessageProducer messageProducer;
     private final MapperFacade mapper;
     private final OrderService orderService;
 
@@ -45,8 +51,13 @@ public class OrderController {
 
     @PutMapping("/submit")
     public List<OrderDto> submitClientOrders(@PathVariable @NotNull final UUID clientId){
-        return orderService
-                .submitOrders(clientId)
+
+        final Client client = orderService.submitOrders(clientId);
+        final List<Order> orders = client.getOrders();
+
+        messageProducer.sendEvent(new SubmitOrdersEventDto(mapper.map(client, ClientDto.class)));
+
+        return orders
                 .stream()
                 .map(o -> mapper.map(o, OrderDto.class))
                 .collect(Collectors.toList());

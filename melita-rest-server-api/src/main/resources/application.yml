@@ -26,11 +26,14 @@ spring:
   cloud:
     stream:
       bindings:
-        crmQueue:
-          destination: customers
+        crmQueueCreate:
+          destination: createClients
+        crmQueueUpdate:
+          destination: updateClients
+        crmQueueSubmit:
+          destination: submitClients
       default:
         contentType: application/json
-
 
 server:
   port: 9095

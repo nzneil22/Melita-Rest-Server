@@ -48,7 +48,7 @@ class ClientServiceTest {
 
         Mockito.when(clientDao.findClient(any(), anyBoolean())).thenReturn(Optional.empty());
 
-        Assertions.assertThat(sut.findClient(clientId))
+        Assertions.assertThat(sut.findClient(clientId, true))
                 .isNotNull()
                 .isEmpty();
 
@@ -64,7 +64,7 @@ class ClientServiceTest {
 
         Mockito.when(clientDao.findClient(any(), anyBoolean())).thenReturn(Optional.of(client));
 
-        Assertions.assertThat(sut.findClient(clientId))
+        Assertions.assertThat(sut.findClient(clientId, true))
                 .isNotNull()
                 .isPresent();
 
@@ -84,7 +84,7 @@ class ClientServiceTest {
         Assertions.assertThatThrownBy(() -> sut.updateClient(clientId, updateClientRequest))
                 .isInstanceOf(EntityNotFoundException.class);
 
-        Mockito.verify(clientDao, Mockito.times(1)).findClientForUpdate(clientId, false);
+        Mockito.verify(clientDao, Mockito.times(1)).findClientForUpdate(clientId, true);
 
     }
 
@@ -111,7 +111,7 @@ class ClientServiceTest {
         Assertions.assertThat(newClient.getInstallationAddress().getTown())
                 .isEqualTo("newTown");
 
-        Mockito.verify(clientDao, Mockito.times(1)).findClientForUpdate(clientId, false);
+        Mockito.verify(clientDao, Mockito.times(1)).findClientForUpdate(clientId, true);
 
     }
 
@@ -132,7 +132,7 @@ class ClientServiceTest {
         Assertions.assertThat(sut.updateClient(clientId, updateClientRequest))
                 .isEqualTo(client);
 
-        Mockito.verify(clientDao, Mockito.times(1)).findClientForUpdate(clientId, false);
+        Mockito.verify(clientDao, Mockito.times(1)).findClientForUpdate(clientId, true);
 
     }
 
@@ -234,7 +234,7 @@ class ClientServiceTest {
         Assertions.assertThatThrownBy(() -> sut.verifyClientForUpdate(clientId))
                 .isInstanceOf(EntityNotFoundException.class);
 
-        Mockito.verify(clientDao, Mockito.times(1)).findClientForUpdate(clientId, false);
+        Mockito.verify(clientDao, Mockito.times(1)).findClientForUpdate(clientId, true);
 
     }
 
@@ -253,7 +253,7 @@ class ClientServiceTest {
         Assertions.assertThatThrownBy(() -> sut.verifyClientForUpdate(clientId))
                 .isInstanceOf(ClientInactiveException.class);
 
-        Mockito.verify(clientDao, Mockito.times(1)).findClientForUpdate(clientId, false);
+        Mockito.verify(clientDao, Mockito.times(1)).findClientForUpdate(clientId, true);
 
     }
 
@@ -270,7 +270,7 @@ class ClientServiceTest {
         Assertions.assertThat(sut.verifyClientForUpdate(clientId))
                 .isEqualTo(client);
 
-        Mockito.verify(clientDao, Mockito.times(1)).findClientForUpdate(clientId, false);
+        Mockito.verify(clientDao, Mockito.times(1)).findClientForUpdate(clientId, true);
 
     }
 
@@ -281,10 +281,10 @@ class ClientServiceTest {
 
         Mockito.when(clientDao.findClient(any(), anyBoolean())).thenReturn(Optional.empty());
 
-        Assertions.assertThatThrownBy(() -> sut.verifyClient(clientId))
+        Assertions.assertThatThrownBy(() -> sut.verifyClient(clientId, true))
                 .isInstanceOf(EntityNotFoundException.class);
 
-        Mockito.verify(clientDao, Mockito.times(1)).findClient(clientId, false);
+        Mockito.verify(clientDao, Mockito.times(1)).findClient(clientId, true);
 
     }
 
@@ -300,10 +300,10 @@ class ClientServiceTest {
 
         Mockito.when(clientDao.findClient(any(), anyBoolean())).thenReturn(Optional.of(client));
 
-        Assertions.assertThatThrownBy(() -> sut.verifyClient(clientId))
+        Assertions.assertThatThrownBy(() -> sut.verifyClient(clientId, true))
                 .isInstanceOf(ClientInactiveException.class);
 
-        Mockito.verify(clientDao, Mockito.times(1)).findClient(clientId, false);
+        Mockito.verify(clientDao, Mockito.times(1)).findClient(clientId, true);
 
     }
 
@@ -317,10 +317,10 @@ class ClientServiceTest {
 
         Mockito.when(clientDao.findClient(any(), anyBoolean())).thenReturn(Optional.of(client));
 
-        Assertions.assertThat(sut.verifyClient(clientId))
+        Assertions.assertThat(sut.verifyClient(clientId, true))
                 .isEqualTo(client);
 
-        Mockito.verify(clientDao, Mockito.times(1)).findClient(clientId, false);
+        Mockito.verify(clientDao, Mockito.times(1)).findClient(clientId, true);
 
     }
 
@@ -329,9 +329,8 @@ class ClientServiceTest {
 
         @Bean
         public ClientService clientService(final MapperFacade mapper,
-                                           final ClientDao clientDao,
-                                           final MessageProducer messageProducer) {
-            return new ClientService(mapper, clientDao, messageProducer);
+                                           final ClientDao clientDao) {
+            return new ClientService(mapper, clientDao);
         }
 
         @Bean

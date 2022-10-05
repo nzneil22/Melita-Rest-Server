@@ -1,6 +1,5 @@
 package com.melita_task.api.service;
 
-import com.melita_task.api.amqp.MessagePayload;
 import com.melita_task.api.amqp.MessageProducer;
 import com.melita_task.api.dao.ClientDao;
 import com.melita_task.api.exceptions.ClientAlreadyActivatedException;
@@ -12,9 +11,7 @@ import com.melita_task.api.models.FullName;
 import com.melita_task.api.models.InstallationAddress;
 import com.melita_task.api.models.requests.CreateClientRequest;
 import com.melita_task.api.models.requests.UpdateClientRequest;
-import com.melita_task.contract.ClientDtoRabbit;
 import com.melita_task.contract.enums.ClientStatus;
-import com.melita_task.contract.enums.EventTypes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -34,7 +31,6 @@ public class ClientService {
 
     private final MapperFacade mapper;
     private final ClientDao clientDao;
-    private final MessageProducer messageProducer;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public Client registerClient(final CreateClientRequest request) {
@@ -44,21 +40,15 @@ public class ClientService {
 
         clientDao.save(newClient);
 
-        messageProducer.sendMessage(
-                MessagePayload.builder()
-                        .client(mapper.map(newClient, ClientDtoRabbit.class))
-                        .event(EventTypes.CLIENT_CREATED)
-                        .build());
-
         log.info("Registered New Client");
 
         return newClient;
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public Optional<Client> findClient(final UUID id) {
+    public Optional<Client> findClient(final UUID id, final boolean initialize) {
 
-        final Optional<Client> client = clientDao.findClient(id, true);
+        final Optional<Client> client = clientDao.findClient(id, initialize);
         client.ifPresent(value -> log.debug("Client Id [{}] resolved to client [{}]", id, value));
         return client;
     }
@@ -72,11 +62,6 @@ public class ClientService {
 
         clientDao.save(client);
 
-        messageProducer.sendMessage(
-                MessagePayload.builder()
-                        .client(mapper.map(client, ClientDtoRabbit.class))
-                        .event(EventTypes.CLIENT_UPDATED)
-                        .build());
         return client;
     }
 
@@ -95,17 +80,11 @@ public class ClientService {
         client.setStatus(cStatus);
         clientDao.save(client);
 
-        messageProducer.sendMessage(
-                MessagePayload.builder()
-                        .client(mapper.map(client, ClientDtoRabbit.class))
-                        .event(EventTypes.CLIENT_UPDATED)
-                        .build());
-
         return client;
     }
 
     public Client verifyClientForUpdate(final UUID clientId) {
-        final Client client = clientDao.findClientForUpdate(clientId, false).orElseThrow(EntityNotFoundException::new);
+        final Client client = clientDao.findClientForUpdate(clientId, true).orElseThrow(EntityNotFoundException::new);
 
         if (!client.isActive()) {
             log.error("Client [{}] is currently inactive", clientId);
@@ -115,14 +94,14 @@ public class ClientService {
         return client;
     }
 
-    public Client verifyClient(final UUID clientId) {
+    public Client verifyClient(final UUID clientId, final boolean initialize) {
 
-        final Client client = clientDao.findClient(clientId, false).orElseThrow(EntityNotFoundException::new);
+        final Client client = clientDao.findClient(clientId, initialize).orElseThrow(EntityNotFoundException::new);
 
         if (!client.isActive()) {
             log.error("Client [{}] is currently inactive", clientId);
             throw new ClientInactiveException();
-        };
+        }
 
         return client;
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.melita_task.api.WebSecurityConfig;
+import com.melita_task.api.amqp.MessageProducer;
 import com.melita_task.api.exceptions.InvalidServiceIdException;
 import com.melita_task.api.exceptions.OrderSubmittedException;
 import com.melita_task.api.mapper.CustomMapper;
@@ -55,6 +56,9 @@ class OrderControllerTest {
 
     @Autowired
     private MapperFacade mapper;
+
+    @MockBean
+    private MessageProducer messageProducer;
 
     @MockBean
     private OrderService orderService;
@@ -187,7 +191,7 @@ class OrderControllerTest {
 
         client.getOrders().forEach(order -> order.setStatus(OrderStatus.SUBMITTED));
 
-        Mockito.when(orderService.submitOrders(any())).thenReturn(client.getOrders());
+        Mockito.when(orderService.submitOrders(any())).thenReturn(client);
 
         final MvcResult response = mockMvc.perform(MockMvcRequestBuilders.put("/clients/{clientId}/orders/submit", clientId).contentType(APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();

@@ -8,10 +8,10 @@
         <module>melita-rest-server-api</module>
     </modules>
 
-    <groupId>com.example</groupId>
-    <artifactId>Melita</artifactId>
+    <groupId>com.e_shop</groupId>
+    <artifactId>E-Shop</artifactId>
     <version>1.0</version>
-    <name>Melita</name>
+    <name>E-Shop</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>

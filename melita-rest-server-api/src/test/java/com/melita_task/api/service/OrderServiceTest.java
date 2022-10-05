@@ -2,6 +2,7 @@ package com.melita_task.api.service;
 
 import com.melita_task.api.amqp.MessageProducer;
 import com.melita_task.api.dao.ClientDao;
+import com.melita_task.api.dao.OrderDao;
 import com.melita_task.api.exceptions.InvalidServiceIdException;
 import com.melita_task.api.exceptions.OrderSubmittedException;
 import com.melita_task.api.mapper.CustomMapper;
@@ -40,6 +41,9 @@ class OrderServiceTest {
     private ClientDao clientDao;
 
     @MockBean
+    private OrderDao orderDao;
+
+    @MockBean
     private ProductCatalogService productCatalogService;
 
     @MockBean
@@ -54,12 +58,12 @@ class OrderServiceTest {
     @Test
     void getClientOrders_incorrectClientId_ShouldThrowEntityNotFoundException() {
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenThrow(EntityNotFoundException.class);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenThrow(EntityNotFoundException.class);
 
         final UUID clientId = UUID.randomUUID();
         Assertions.assertThatThrownBy(() -> sut.getClientOrders(clientId)).isInstanceOf(EntityNotFoundException.class);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
     }
 
     @Test
@@ -68,12 +72,12 @@ class OrderServiceTest {
         final Client client = new Client(new FullName("name", "helloworld", "surname"),
                 new InstallationAddress("island", "town", "street", "building"));
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenReturn(client);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenReturn(client);
 
         final UUID clientId = UUID.randomUUID();
         Assertions.assertThat(sut.getClientOrders(clientId)).isNotNull().isEmpty();
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
     }
 
     @Test
@@ -86,12 +90,12 @@ class OrderServiceTest {
 
         client.addOrder(oRequest);
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenReturn(client);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenReturn(client);
 
         final UUID clientId = UUID.randomUUID();
         Assertions.assertThat(sut.getClientOrders(clientId)).isNotEmpty();
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
     }
 
     @Test
@@ -99,12 +103,12 @@ class OrderServiceTest {
 
         final CreateOrderRequest oRequest = new CreateOrderRequest(100, LobTypes.INT, new Date());
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenThrow(EntityNotFoundException.class);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenThrow(EntityNotFoundException.class);
 
         final UUID clientId = UUID.randomUUID();
         Assertions.assertThatThrownBy(() -> sut.addOrder(clientId, oRequest)).isInstanceOf(EntityNotFoundException.class);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
     }
 
     @Test
@@ -117,7 +121,7 @@ class OrderServiceTest {
 
         final CreateOrderRequest oRequest = new CreateOrderRequest(servId, LobTypes.INT, new Date());
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenReturn(client);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenReturn(client);
 
         Mockito.when(productCatalogService.isServiceIdValid(any())).thenReturn(false);
 
@@ -125,7 +129,7 @@ class OrderServiceTest {
         final UUID clientId = UUID.randomUUID();
         Assertions.assertThatThrownBy(() -> sut.addOrder(clientId, oRequest)).isInstanceOf(InvalidServiceIdException.class);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
         Mockito.verify(productCatalogService, Mockito.times(1)).isServiceIdValid(servId);
 
     }
@@ -140,7 +144,7 @@ class OrderServiceTest {
 
         final CreateOrderRequest oRequest = new CreateOrderRequest(servId, LobTypes.INT, new Date());
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenReturn(client);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenReturn(client);
 
         Mockito.when(productCatalogService.isServiceIdValid(any())).thenReturn(true);
 
@@ -148,7 +152,7 @@ class OrderServiceTest {
         final UUID clientId = UUID.randomUUID();
         Assertions.assertThat(sut.addOrder(clientId, oRequest)).isInstanceOf(Order.class);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
         Mockito.verify(productCatalogService, Mockito.times(1)).isServiceIdValid(servId);
 
     }
@@ -158,12 +162,12 @@ class OrderServiceTest {
 
         final UpdateOrderRequest oRequest = new UpdateOrderRequest(100, LobTypes.INT, new Date());
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenThrow(EntityNotFoundException.class);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenThrow(EntityNotFoundException.class);
 
         final UUID clientId = UUID.randomUUID();
         Assertions.assertThatThrownBy(() -> sut.editOrder(clientId, UUID.randomUUID(), oRequest)).isInstanceOf(EntityNotFoundException.class);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
 
     }
 
@@ -177,7 +181,7 @@ class OrderServiceTest {
 
         final UpdateOrderRequest oRequest = new UpdateOrderRequest(servId, LobTypes.INT, new Date());
 
-        Mockito.when(clientService.verifyClient(any(UUID.class)))
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class)))
                 .thenReturn(client);
 
         Mockito.when(productCatalogService.isServiceIdValid(any()))
@@ -187,7 +191,7 @@ class OrderServiceTest {
         Assertions.assertThatThrownBy(() -> sut.editOrder(clientId, UUID.randomUUID(), oRequest))
                 .isInstanceOf(InvalidServiceIdException.class);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
         Mockito.verify(productCatalogService, Mockito.times(1)).isServiceIdValid(servId);
 
     }
@@ -202,24 +206,24 @@ class OrderServiceTest {
 
         final UpdateOrderRequest oRequest = new UpdateOrderRequest(servId, LobTypes.INT, new Date());
 
-        Mockito.when(clientService.verifyClient(any(UUID.class)))
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class)))
                 .thenReturn(client);
 
         Mockito.when(productCatalogService.isServiceIdValid(any()))
                 .thenReturn(true);
 
-        Mockito.when(clientDao.findOrderForUpdate(any(UUID.class), any(UUID.class)))
+        Mockito.when(orderDao.findOrderForUpdate(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.empty());
 
         final UUID clientId = client.getId();
         final UUID orderId = UUID.randomUUID();
 
         Assertions.assertThatThrownBy(() -> sut.editOrder(clientId, orderId, oRequest))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(EntityNotFoundException.class);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
         Mockito.verify(productCatalogService, Mockito.times(1)).isServiceIdValid(servId);
-        Mockito.verify(clientDao, Mockito.times(1)).findOrderForUpdate(clientId, orderId);
+        Mockito.verify(orderDao, Mockito.times(1)).findOrderForUpdate(orderId, clientId);
 
     }
 
@@ -239,13 +243,13 @@ class OrderServiceTest {
 
         final UpdateOrderRequest oUpdate = new UpdateOrderRequest(servId, LobTypes.MOB, new Date());
 
-        Mockito.when(clientService.verifyClient(any(UUID.class)))
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class)))
                 .thenReturn(client);
 
         Mockito.when(productCatalogService.isServiceIdValid(any()))
                 .thenReturn(true);
 
-        Mockito.when(clientDao.findOrderForUpdate(any(UUID.class), any(UUID.class)))
+        Mockito.when(orderDao.findOrderForUpdate(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(order));
 
         final UUID clientId = client.getId();
@@ -254,9 +258,9 @@ class OrderServiceTest {
         Assertions.assertThatThrownBy(() -> sut.editOrder(clientId, orderId, oUpdate))
                 .isInstanceOf(OrderSubmittedException.class);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
         Mockito.verify(productCatalogService, Mockito.times(1)).isServiceIdValid(servId);
-        Mockito.verify(clientDao, Mockito.times(1)).findOrderForUpdate(clientId, orderId);
+        Mockito.verify(orderDao, Mockito.times(1)).findOrderForUpdate(orderId, clientId);
     }
 
     @Test
@@ -273,16 +277,16 @@ class OrderServiceTest {
 
         final UpdateOrderRequest oUpdate = new UpdateOrderRequest(servId, LobTypes.MOB, new Date());
 
-        Mockito.when(clientService.verifyClient(any(UUID.class)))
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class)))
                 .thenReturn(client);
 
         Mockito.when(productCatalogService.isServiceIdValid(any()))
                 .thenReturn(true);
 
-        Mockito.when(clientDao.findOrderForUpdate(any(UUID.class), any(UUID.class)))
+        Mockito.when(orderDao.findOrderForUpdate(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(order));
 
-        Mockito.when(clientDao.saveOrder(any(Order.class)))
+        Mockito.when(orderDao.saveOrder(any(Order.class)))
                 .thenReturn(order);
 
         final UUID clientId = client.getId();
@@ -290,22 +294,22 @@ class OrderServiceTest {
 
         Assertions.assertThat(sut.editOrder(clientId, orderId, oUpdate).getServiceId()).isEqualTo(servId);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
         Mockito.verify(productCatalogService, Mockito.times(1)).isServiceIdValid(servId);
-        Mockito.verify(clientDao, Mockito.times(1)).findOrderForUpdate(clientId, orderId);
-        Mockito.verify(clientDao, Mockito.times(1)).saveOrder(order);
+        Mockito.verify(orderDao, Mockito.times(1)).findOrderForUpdate(orderId, clientId);
+        Mockito.verify(orderDao, Mockito.times(1)).saveOrder(order);
 
     }
 
     @Test
     void cancelOrder_IncorrectClientId_ShouldReturnEntityNotFoundException(){
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenThrow(EntityNotFoundException.class);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenThrow(EntityNotFoundException.class);
 
         final UUID clientId = UUID.randomUUID();
         Assertions.assertThatThrownBy(() -> sut.cancelOrder(clientId, UUID.randomUUID())).isInstanceOf(EntityNotFoundException.class);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
 
     }
 
@@ -315,18 +319,18 @@ class OrderServiceTest {
         final Client client = new Client(new FullName("name", "helloworld", "surname"),
                 new InstallationAddress("island", "town", "street", "building"));
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenReturn(client);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenReturn(client);
 
-        Mockito.when(clientDao.findOrderForUpdate(any(UUID.class), any(UUID.class)))
+        Mockito.when(orderDao.findOrderForUpdate(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.empty());
 
         final UUID clientId = client.getId();
         final UUID orderId = UUID.randomUUID();
         Assertions.assertThatThrownBy(() -> sut.cancelOrder(clientId, orderId))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(EntityNotFoundException.class);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
-        Mockito.verify(clientDao, Mockito.times(1)).findOrderForUpdate(clientId, orderId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
+        Mockito.verify(orderDao, Mockito.times(1)).findOrderForUpdate(orderId, clientId);
     }
 
     @Test
@@ -341,9 +345,9 @@ class OrderServiceTest {
 
         order.setStatus(OrderStatus.SUBMITTED);
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenReturn(client);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenReturn(client);
 
-        Mockito.when(clientDao.findOrderForUpdate(any(UUID.class), any(UUID.class)))
+        Mockito.when(orderDao.findOrderForUpdate(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(order));
 
         final UUID clientId = client.getId();
@@ -351,8 +355,8 @@ class OrderServiceTest {
         Assertions.assertThatThrownBy(() -> sut.cancelOrder(clientId, orderId))
                 .isInstanceOf(OrderSubmittedException.class);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
-        Mockito.verify(clientDao, Mockito.times(1)).findOrderForUpdate(clientId, orderId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
+        Mockito.verify(orderDao, Mockito.times(1)).findOrderForUpdate(orderId, clientId);
 
     }
 
@@ -366,9 +370,9 @@ class OrderServiceTest {
 
         final Order order = client.addOrder(oRequest);
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenReturn(client);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenReturn(client);
 
-        Mockito.when(clientDao.findOrderForUpdate(any(UUID.class), any(UUID.class)))
+        Mockito.when(orderDao.findOrderForUpdate(any(UUID.class), any(UUID.class)))
                 .thenReturn(Optional.of(order));
 
         final UUID clientId = client.getId();
@@ -378,19 +382,19 @@ class OrderServiceTest {
 
         Assertions.assertThat(client.getOrders().contains(order)).isFalse();
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
-        Mockito.verify(clientDao, Mockito.times(1)).findOrderForUpdate(clientId, orderId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
+        Mockito.verify(orderDao, Mockito.times(1)).findOrderForUpdate(orderId, clientId);
 
     }
 
     @Test
     void submitOrders_IncorrectClientId_ShouldReturnEntityNotFoundException(){
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenThrow(EntityNotFoundException.class);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenThrow(EntityNotFoundException.class);
 
         final UUID clientId = UUID.randomUUID();
         Assertions.assertThatThrownBy(() -> sut.submitOrders(clientId)).isInstanceOf(EntityNotFoundException.class);
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
     }
 
     @Test
@@ -399,12 +403,12 @@ class OrderServiceTest {
         final Client client = new Client(new FullName("name", "helloworld", "surname"),
                 new InstallationAddress("island", "town", "street", "building"));
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenReturn(client);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenReturn(client);
 
         final UUID clientId = client.getId();
-        Assertions.assertThat(sut.submitOrders(clientId)).isEmpty();
+        Assertions.assertThat(sut.submitOrders(clientId).getOrders()).isEmpty();
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
     }
 
     @Test
@@ -421,15 +425,15 @@ class OrderServiceTest {
 
         final Order order2 = client.addOrder(oRequest2);
 
-        Mockito.when(clientService.verifyClient(any(UUID.class))).thenReturn(client);
+        Mockito.when(clientService.verifyClientForUpdate(any(UUID.class))).thenReturn(client);
 
         final UUID clientId = client.getId();
-        final List<Order> submittedOrders = sut.submitOrders(clientId);
+        final List<Order> submittedOrders = sut.submitOrders(clientId).getOrders();
 
         Assertions.assertThat(submittedOrders.contains(order1)).isTrue();
         Assertions.assertThat(submittedOrders.contains(order2)).isTrue();
 
-        Mockito.verify(clientService, Mockito.times(1)).verifyClient(clientId);
+        Mockito.verify(clientService, Mockito.times(1)).verifyClientForUpdate(clientId);
     }
 
 
@@ -437,16 +441,16 @@ class OrderServiceTest {
     public static class OrdersServiceTestConfig {
 
         @Bean
-        public OrderService clientService(final MapperFacade mapper,
+        public OrderService clientService(
                                           final ClientDao clientDao,
+                                          final OrderDao orderDao,
                                           final ProductCatalogService productCatalogService,
-                                          final MessageProducer messageProducer,
                                           final ClientService clientService) {
 
-            return new OrderService(mapper,
+            return new OrderService(
                     clientDao,
+                    orderDao,
                     productCatalogService,
-                    messageProducer,
                     clientService);
         }
 

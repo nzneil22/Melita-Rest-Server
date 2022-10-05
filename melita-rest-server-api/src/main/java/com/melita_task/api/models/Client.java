@@ -43,6 +43,7 @@ public class Client implements Serializable {
     @Embedded
     private InstallationAddress installationAddress;
 
+    @Enumerated(value = EnumType.STRING)
     private ClientStatus status;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "client", fetch = FetchType.LAZY)

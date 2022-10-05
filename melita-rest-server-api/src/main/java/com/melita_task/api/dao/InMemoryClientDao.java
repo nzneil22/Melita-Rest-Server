@@ -18,7 +18,7 @@ import java.util.UUID;
 @Service
 @Profile("in-memory")
 @NoArgsConstructor
-public class InMemoryClientDao implements ClientDao {
+public class InMemoryClientDao implements ClientDao, OrderDao {
 
     private MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 

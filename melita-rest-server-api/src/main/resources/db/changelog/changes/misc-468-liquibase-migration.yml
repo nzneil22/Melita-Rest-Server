@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: char(36)
+                  type: varchar(36)
                   autoIncrement: false
                   constraints:
                     primaryKey: true
@@ -57,7 +57,7 @@ databaseChangeLog:
 
               - column:
                   name: status
-                  type: int(11)
+                  type: varchar(50)
                   constraints:
                     nullable: false
 
@@ -71,7 +71,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: char(36)
+                  type: varchar(36)
                   autoIncrement: false
                   constraints:
                     primaryKey: true
@@ -85,24 +85,24 @@ databaseChangeLog:
 
               - column:
                   name: lob_type
-                  type: int(11)
+                  type: varchar(50)
                   constraints:
                     nullable: false
 
               - column:
                   name: service_id
-                  type: int(11)
+                  type: int
                   constraints:
                     nullable: false
 
               - column:
                   name: status
-                  type: int(11)
+                  type: varchar(50)
                   constraints:
                     nullable: false
 
               - column:
                   name: client_id
-                  type: char(36)
+                  type: varchar(36)
                   constraints:
                     nullable: false

@@ -8,7 +8,13 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AMQPBindings {
 
-    @Output("crmQueue")
-    MessageChannel crmQueueSend();
+    @Output("crmQueueCreate")
+    MessageChannel crmQueueCreate();
+
+    @Output("crmQueueUpdate")
+    MessageChannel crmQueueUpdate();
+
+    @Output("crmQueueSubmit")
+    MessageChannel crmQueueSubmit();
 
 }

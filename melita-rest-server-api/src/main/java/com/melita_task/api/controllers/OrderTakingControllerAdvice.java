@@ -26,27 +26,30 @@ public class OrderTakingControllerAdvice {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Void> handleAuthException(final BadCredentialsException ex){
         log.error("Authentication Exception Occurred", ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Void> handleDeniedException(final AccessDeniedException ex){
         log.error("Access Denied Exception Occurred", ex);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN).build();
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Void> handleNotFoundException(final EntityNotFoundException ex) {
         log.error("Entity Not Found Exception Occurred", ex);
-        return ResponseEntity.notFound().build();
+        return ResponseEntity
+                .notFound().build();
     }
 
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<Void> handleException(final Throwable ex) {
+    public ResponseEntity<String> handleException(final Throwable ex) {
 
         log.error("General Error Occurred", ex);
         return ResponseEntity.internalServerError()
-                .build();
+                .body(ex.getMessage());
     }
 
 }

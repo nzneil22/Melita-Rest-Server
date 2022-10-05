@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,8 +18,9 @@ import java.util.UUID;
 @Slf4j
 @Service
 @Profile("!in-memory")
+@Transactional
 @RequiredArgsConstructor
-public class MySqlClientDao implements ClientDao {
+public class MySqlClientDao implements ClientDao, OrderDao {
 
     private final TransactionTemplate transactionTemplate;
 
@@ -33,7 +35,7 @@ public class MySqlClientDao implements ClientDao {
     }
 
     @Override
-    public Optional<Client> findClient(UUID clientId, boolean initialize) {
+    public Optional<Client> findClient(final UUID clientId, final boolean initialize) {
 
         Optional<Client> c = clientRepository.findById(clientId);
 
@@ -53,13 +55,13 @@ public class MySqlClientDao implements ClientDao {
     }
 
     @Override
-    public Optional<Order> findOrder(UUID clientId, UUID orderId) {
-        return orderRepository.findById(clientId, orderId);
+    public Optional<Order> findOrder(UUID orderId, UUID clientId) {
+        return orderRepository.findById(orderId, clientId);
     }
 
     @Override
-    public Optional<Order> findOrderForUpdate(UUID clientId, UUID orderId) {
-        return orderRepository.findByIdAndClientIdForUpdate(clientId, orderId);
+    public Optional<Order> findOrderForUpdate(UUID orderId, UUID clientId) {
+        return orderRepository.findByIdAndClientIdForUpdate(orderId, clientId);
     }
 
 

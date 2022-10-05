@@ -3,6 +3,7 @@ package com.melita_task.api.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.melita_task.api.WebSecurityConfig;
+import com.melita_task.api.amqp.MessageProducer;
 import com.melita_task.api.mapper.CustomMapper;
 import com.melita_task.api.models.Client;
 import com.melita_task.api.models.FullName;
@@ -33,6 +34,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Slf4j
@@ -44,11 +46,14 @@ class ClientControllerTest {
     @MockBean
     private ClientService clientService;
 
+    @MockBean
+    private MessageProducer messageProducer;
+
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void createClient_givenValidCreateCLientRequest_shouldReturnClientDTO() throws Exception {
+    public void   createClient_givenValidCreateClientRequest_shouldReturnClientDTO() throws Exception {
 
         final Client client = new Client(new FullName("name", "middleName", "surname"),
                 new InstallationAddress("island", "town", "street", "building"));
@@ -99,7 +104,7 @@ class ClientControllerTest {
         final Client client = new Client(new FullName("firstName", "middleName", "lastName"),
                 new InstallationAddress("island", "town", "street", "building"));
 
-        Mockito.when(clientService.findClient(any())).thenReturn(Optional.of(client));
+        Mockito.when(clientService.findClient(any(), anyBoolean())).thenReturn(Optional.of(client));
 
         final MvcResult response = mockMvc.perform(MockMvcRequestBuilders.get("/clients/{clientId}", UUID.randomUUID()))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
@@ -113,7 +118,7 @@ class ClientControllerTest {
     @Test
     public void getClient_givenInValidUUID_shouldRespondWithNotFound() throws Exception {
 
-        Mockito.when(clientService.findClient(any())).thenReturn(Optional.empty());
+        Mockito.when(clientService.findClient(any(), anyBoolean())).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/clients/{clientId}", UUID.randomUUID()))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());

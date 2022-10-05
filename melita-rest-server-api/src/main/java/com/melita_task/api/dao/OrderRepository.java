@@ -16,9 +16,9 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
 
     @Query("SELECT o FROM Order o where o.id =:id AND o.client.id =:clientId")
-    Optional<Order> findById(@Param("id") UUID id, @Param("clientId") UUID clientId);
+    Optional<Order> findById(@Param("id") UUID orderId, @Param("clientId") UUID clientId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT o FROM Order o where o.id =:id AND o.client.id =:clientId")
-    Optional<Order> findByIdAndClientIdForUpdate(@Param("id") UUID id, @Param("clientId") UUID clientId);
+    Optional<Order> findByIdAndClientIdForUpdate(@Param("id") UUID orderId, @Param("clientId") UUID clientId);
 }
