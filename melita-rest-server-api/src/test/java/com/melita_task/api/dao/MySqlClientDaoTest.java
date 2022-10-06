@@ -37,9 +37,6 @@ class MySqlClientDaoTest {
     private TestEntityManager testEntityManager;
 
     @Autowired
-    private ClientRepository clientRepository;
-
-    @Autowired
     private MySqlClientDao sut;
 
     @Test
@@ -93,7 +90,7 @@ class MySqlClientDaoTest {
     }
 
     @Test
-    void findClient_whenGivenExistingClientUUID_shouldReturnClient() throws ParseException {
+    void findClient_whenGivenExistingClientUUIDwithOrders_shouldReturnClientWithOrders() throws ParseException {
         final Client client = new Client(new FullName("firstName", "middleName", "lastName"),
                 new InstallationAddress("island", "town", "street", "building"));
 
